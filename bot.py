@@ -39,29 +39,26 @@ logger = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
-    start_msg = "Ciao vecchia volpe, questo è un bot per conteggiare i turni di lavoro."
+    start_msg = "Ciao vecchia volpe, questo è un bot per conteggiare i turni di lavoro, premi \help per visionare i vari comandi!."
     dbh = DBHelper()
-    print str(update.message.chat_id)
     dbh.start(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=start_msg)
 
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    help_msg="premi /link per ottenere il prossimo questionario! \n/start per rileggere il primo messaggio!"
+    help_msg="premi:\n/punch per iniziare o concludere il turno! \n/tot per avere il totale di ore finora lavorate!"
     bot.send_message(chat_id=update.message.chat_id, text=help_msg)
 
 def punch(bot, update):
     """Send a message when the command /help is issued."""
     dbh = DBHelper()
-    print str(update.message.chat_id)
     msg=dbh.shift_press(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
 
 def tot(bot, update):
     """Send a message when the command /help is issued."""
     dbh = DBHelper()
-    print str(update.message.chat_id)
     msg=dbh.total_hour(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
 

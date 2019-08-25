@@ -87,9 +87,7 @@ class DBHelper:
         datestop=[int(x) for x in str(strstop[1]).split('/')]
         
         difference_day = datetime(datestart[0],datestart[2],datestart[1]) - datetime(datestop[0],datestop[2],datestop[1])
-        print difference_day.days
 
-        print hourstart[0],hourstart[1]
 
         start = int(hourstart[0])*60 + int(hourstart[1])
         stop = int(hourstop[0])*60 + int(hourstop[1]) + difference_day.days*1440
@@ -104,7 +102,6 @@ def now():
     minutes = now.hour*60 + now.minute
     best = [(minutes /15)*15,((minutes/15)+1)*15]
     result = min(best, key=lambda x:abs(x-minutes))
-    print result
     hours = (result / 15) / 4
     minutes = (result - hours*60)
     return str(hours)+":"+str(minutes)+"-"+str(now.year)+"/"+str(now.day)+"/"+str(now.month)
