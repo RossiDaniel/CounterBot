@@ -105,3 +105,4 @@ venv.bak/
 
 
 secret.py
+counterbot.db
