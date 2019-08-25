@@ -24,10 +24,7 @@ bot.
 """
 
 import logging
-
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-#from code import getLink
-from function import now
 from DBHelper import DBHelper
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
