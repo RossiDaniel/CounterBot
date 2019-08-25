@@ -10,7 +10,7 @@ class DBHelper:
         
         if len(result) == 0:
             stmt = "INSERT INTO account (idchat) VALUES (?)"
-            args = (idchat, 0)
+            args = (idchat,)
             conn = sqlite3.connect(self.dbname)
             conn.execute(stmt, args)
             conn.commit()
