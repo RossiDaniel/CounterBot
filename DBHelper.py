@@ -95,7 +95,9 @@ class DBHelper:
         elapsed_time = stop-start
         strelapsed_time = str(elapsed_time/60)+" ore, "+str(elapsed_time%60)+" minuti"
         return elapsed_time,strelapsed_time
-
+    
+    def day_hour(self,idchat):
+        return 'Ore lavorate oggi: '
 
 def now():
     now = datetime.now()

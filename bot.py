@@ -47,7 +47,7 @@ def start(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    help_msg="premi:\n/punch per iniziare o concludere il turno! \n/tot per avere il totale di ore finora lavorate!"
+    help_msg="premi:\n/punch per iniziare o concludere il turno!\n \day per avere le ore lavorate oggi! \n/tot per avere il totale di ore finora lavorate!"
     bot.send_message(chat_id=update.message.chat_id, text=help_msg)
 
 def punch(bot, update):
@@ -61,6 +61,14 @@ def tot(bot, update):
     dbh = DBHelper()
     msg=dbh.total_hour(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
+
+def day(bot, update):
+    """Send a message when the command /help is issued."""
+    dbh = DBHelper()
+    msg=dbh.day_hour(str(update.message.chat_id))
+    bot.send_message(chat_id=update.message.chat_id, text=msg)
+
+
 
 def error(bot, update):
     """Log Errors caused by Updates."""
@@ -82,6 +90,7 @@ def main():
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("tot", tot))
     dp.add_handler(CommandHandler("punch", punch))
+    dp.add_handler(CommandHandler("day", day))
 
     # log all errors
     dp.add_error_handler(error)
