@@ -75,10 +75,17 @@ class DBHelper:
         conn.close()
         return result
     
-    def difference(self,idchat):
+    def difference_turno(self,idchat):
         result = self.select_idchat('turno',idchat)
-        strstart = str(result[0][2]).split('-')
-        strstop = str(result[0][3]).split('-')
+        elapsed_time = self.difference_date(result[0][2],result[0][3])
+        strelapsed_time = str_time(elapsed_time)
+
+    def str_time(self,elapsed_time):
+        return str(elapsed_time/60)+" ore, "+str(elapsed_time%60)+" minuti"
+
+    def difference_date(self,date1,date2):
+        strstart = str(date1).split('-')
+        strstop = str(date2).split('-')
 
         hourstart=str(strstart[0]).split(':')
         datestart=[int(x) for x in str(strstart[1]).split('/')]
@@ -88,16 +95,24 @@ class DBHelper:
         
         difference_day = datetime(datestart[0],datestart[2],datestart[1]) - datetime(datestop[0],datestop[2],datestop[1])
 
-
         start = int(hourstart[0])*60 + int(hourstart[1])
         stop = int(hourstop[0])*60 + int(hourstop[1]) + difference_day.days*1440
 
         elapsed_time = stop-start
-        strelapsed_time = str(elapsed_time/60)+" ore, "+str(elapsed_time%60)+" minuti"
-        return elapsed_time,strelapsed_time
+        return elapsed_time
     
     def day_hour(self,idchat):
-        return 'Ore lavorate oggi: '
+        result = self.select_idchat('data',idchat)
+        current_date = now()
+        current_data = current_date.split('-')[1]
+        
+        elapsed_time = 0
+        for r in result:
+            if r[2].split('-')[1] == current_data:
+                elapsed_day = self.difference_date(r[2],r[3])
+                elapsed_time += elapsed_day
+
+        return 'Ore lavorate oggi: '+self.str_time(elapsed_time)
 
 def now():
     now = datetime.now()
