@@ -47,7 +47,7 @@ def start(bot, update):
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    help_msg="premi:\n/punch per iniziare o concludere il turno!\n \day per avere le ore lavorate oggi! \n/tot per avere il totale di ore finora lavorate!"
+    help_msg="premi:\n/punch per iniziare o concludere il turno!\n /day per avere le ore lavorate oggi! \n/tot per avere il totale di ore finora lavorate!"
     bot.send_message(chat_id=update.message.chat_id, text=help_msg)
 
 def punch(bot, update):
