@@ -20,8 +20,7 @@ class DBHelper:
 
     def total_hour(self,idchat):
         result = self.select_idchat('account',idchat)
-        result[0][2]
-        strelapsed_time = "Durata totale: "+str(result[0][2]/60)+" ore, "+str(result[0][2]%60)+" minuti"
+        strelapsed_time = "Durata totale: "+self.str_time(result[0][2])
         return strelapsed_time
 
 
@@ -44,7 +43,7 @@ class DBHelper:
             conn.execute(stmt, args)
             conn.commit()
             conn.close()
-            eltime,streltime = self.difference(idchat)
+            eltime,streltime = self.difference_turno(idchat)
             self.add_hours(eltime,idchat)
             self.delete_idchat('turno',idchat)
             return "Fine: "+str(current_d)+"\n"+"Durata: "+streltime
@@ -78,7 +77,8 @@ class DBHelper:
     def difference_turno(self,idchat):
         result = self.select_idchat('turno',idchat)
         elapsed_time = self.difference_date(result[0][2],result[0][3])
-        strelapsed_time = str_time(elapsed_time)
+        strelapsed_time = self.str_time(elapsed_time)
+        return elapsed_time,strelapsed_time
 
     def str_time(self,elapsed_time):
         return str(elapsed_time/60)+" ore, "+str(elapsed_time%60)+" minuti"
