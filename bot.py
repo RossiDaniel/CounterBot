@@ -25,8 +25,8 @@ bot.
 
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from DBHelper import DBHelper
 from secret import TELEGRAM_TOKEN
+import function
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -40,35 +40,33 @@ logger = logging.getLogger(__name__)
 def start(bot, update):
     """Send a message when the command /start is issued."""
     start_msg = "Ciao vecchia volpe, questo è un bot per conteggiare i turni di lavoro, premi /help per visionare i vari comandi!."
-    dbh = DBHelper()
-    dbh.start(str(update.message.chat_id))
+    function.fstart(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=start_msg)
-
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    help_msg="premi:\n/punch per iniziare o concludere il turno!\n/day per avere le ore lavorate oggi! \n/tot per avere il totale di ore finora lavorate!"
+    help_msg="premi:\n/punch per iniziare o concludere il turno!\n/day per avere le ore lavorate oggi! \n/tot per avere il totale di ore lavorate finora!\n/opt per compattare i turni collegati!"
     bot.send_message(chat_id=update.message.chat_id, text=help_msg)
 
 def punch(bot, update):
     """Send a message when the command /help is issued."""
-    dbh = DBHelper()
-    msg=dbh.shift_press(str(update.message.chat_id))
+    msg=function.fpunch(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
 
 def tot(bot, update):
     """Send a message when the command /help is issued."""
-    dbh = DBHelper()
-    msg=dbh.total_hour(str(update.message.chat_id))
+    msg=function.ftot(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
 
 def day(bot, update):
     """Send a message when the command /help is issued."""
-    dbh = DBHelper()
-    msg=dbh.day_hour(str(update.message.chat_id))
+    msg=function.fday(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
 
-
+def opt(bot, update):
+    """Send a message when the command /help is issued."""
+    msg=function.fopt(str(update.message.chat_id))
+    bot.send_message(chat_id=update.message.chat_id, text=msg)
 
 def error(bot, update):
     """Log Errors caused by Updates."""
@@ -91,6 +89,8 @@ def main():
     dp.add_handler(CommandHandler("tot", tot))
     dp.add_handler(CommandHandler("punch", punch))
     dp.add_handler(CommandHandler("day", day))
+    dp.add_handler(CommandHandler("opt", opt))
+
 
     # log all errors
     dp.add_error_handler(error)
