@@ -18,7 +18,7 @@ def now():
     minutes = (result - hours*60)
     return str(hours)+":"+str(minutes)+"-"+str(now.year)+"/"+str(now.day)+"/"+str(now.month)
 
-def str_time(elapsed_time):
+def str_duration(elapsed_time):
         return str(elapsed_time/60)+" ore, "+str(elapsed_time%60)+" minuti"
 
 def difference(date1,date2):
@@ -38,3 +38,6 @@ def difference(date1,date2):
 
     elapsed_time = stop-start
     return elapsed_time
+
+def str_time(date):
+	pass

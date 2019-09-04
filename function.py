@@ -13,7 +13,7 @@ def fstart(idchat):
 def ftot(idchat):
         dbh = DBHelper()
         result = dbh.select_idchat('account',idchat)
-        strelapsed_time = "Durata totale: "+utility.str_time(result[0][2])
+        strelapsed_time = "Durata totale: "+utility.str_duration(result[0][2])
         return strelapsed_time
 
 
@@ -31,7 +31,7 @@ def fpunch(idchat):
         elapsed_time = utility.difference(result[0][2],current_d)
         dbh.update_hours(idchat,elapsed_time)
         dbh.delete_id('turno',result[0][0])
-        return "Fine: "+str(current_d)+"\n"+"Durata: "+utility.str_time(elapsed_time)
+        return "Fine: "+str(current_d)+"\n"+"Durata: "+utility.str_duration(elapsed_time)
     
 def fday(idchat):
     dbh = DBHelper()
@@ -45,7 +45,11 @@ def fday(idchat):
             elapsed_day = utility.difference(r[2],r[3])
             elapsed_time += elapsed_day
 
-    return 'Ore lavorate oggi: '+utility.str_time(elapsed_time)
+	result = dbh.select_idchat('turno',idchat)
+	if len(result) == 1:
+		elapsed_time = elapsed_time + utility.difference(result[0][2],utility.now())
+
+    return 'Ore lavorate oggi: '+utility.str_duration(elapsed_time)
 
 def fopt(idchat):
     dbh = DBHelper()
