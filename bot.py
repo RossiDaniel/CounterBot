@@ -75,7 +75,7 @@ def opt(bot, update):
 
 def add(bot, update):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Aggiungi manualmente ore, per farlo digita il numero di ore e di minuti\nPer esempio: 59:30',reply_markup=reply_markup)
+    update.message.reply_text('Aggiungi manualmente ore, per farlo digita il numero di ore e di minuti\nPer esempio: 59:30')
     return 'ADDHOURS'
 
 def reset(bot,update):
