@@ -54,6 +54,7 @@ def fday(idchat):
 def fopt(idchat):
     dbh = DBHelper()
     result = dbh.select_idchat('data',idchat)
+    ini = len(result)
     i = 1
     while i < len(result):
         if result[i-1][3] == result[i][2]:
@@ -62,4 +63,26 @@ def fopt(idchat):
             result.pop(i)
         else:
             i=i+1
-    return 'Ottimizzato!'
+    out = len(result)
+    return 'Ottimizzato: '+str(ini)+' -> '+str(out)
+
+def fadd(idchat,elapsed_time):
+    dbh = DBHelper()
+    dbh.update_hours(idchat,elapsed_time)
+
+def freset(idchat):
+	dbh = DBHelper()
+	result = dbh.select_idchat('turno',idchat)
+
+	for r in result:
+		dbh.delete_id('turno',r[0])
+
+	result = dbh.select_idchat('data',idchat)
+	for r in result:
+		dbh.delete_id('data',r[0])
+
+	result = dbh.select_idchat('account',idchat)
+	for r in result:
+		dbh.delete_id('account',r[0])
+
+	fstart(idchat)

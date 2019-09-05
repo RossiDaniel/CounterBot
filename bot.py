@@ -24,7 +24,8 @@ bot.
 """
 
 import logging
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup,KeyboardButton,ReplyKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler,CallbackQueryHandler
 from secret import TELEGRAM_TOKEN
 import function
 
@@ -39,13 +40,17 @@ logger = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
     """Send a message when the command /start is issued."""
+
+    kb = [[KeyboardButton('/start'),KeyboardButton('/help')],[KeyboardButton('/punch'),KeyboardButton('/day')],[KeyboardButton('/tot'),KeyboardButton('/opt')],[KeyboardButton('/add'),KeyboardButton('/reset')]]
+    kb_markup = ReplyKeyboardMarkup(kb)
+
     start_msg = "Ciao vecchia volpe, questo è un bot per conteggiare i turni di lavoro, premi /help per visionare i vari comandi!."
     function.fstart(str(update.message.chat_id))
-    bot.send_message(chat_id=update.message.chat_id, text=start_msg)
+    bot.send_message(chat_id=update.message.chat_id, text=start_msg,reply_markup=kb_markup)
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
-    help_msg="premi:\n/punch per iniziare o concludere il turno!\n/day per avere le ore lavorate oggi! \n/tot per avere il totale di ore lavorate finora!\n/opt per compattare i turni collegati!"
+    help_msg="premi:\n/punch per iniziare o concludere il turno!\n/day per avere le ore lavorate oggi! \n/tot per avere il totale di ore lavorate finora!\n/opt per compattare i turni collegati!\n/add per aggiungere delle ore non extra!\n/reset per eliminare tutti i dati!"
     bot.send_message(chat_id=update.message.chat_id, text=help_msg)
 
 def punch(bot, update):
@@ -67,6 +72,53 @@ def opt(bot, update):
     """Send a message when the command /help is issued."""
     msg=function.fopt(str(update.message.chat_id))
     bot.send_message(chat_id=update.message.chat_id, text=msg)
+
+def add(bot, update):
+    """Send a message when the command /help is issued."""
+    update.message.reply_text('Aggiungi manualmente ore, per farlo digita il numero di ore e di minuti\nPer esempio: 59:30',reply_markup=reply_markup)
+    return 'ADDHOURS'
+
+def reset(bot,update):
+    keyboard = [[InlineKeyboardButton("Sì", callback_data='1'),InlineKeyboardButton("No", callback_data='0')]]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text('Sicuro di voler resettare?\nTutti i dati andranno perduti:', reply_markup=reply_markup)
+
+def button(bot, update):
+    query = update.callback_query
+    if int(str(format(query.data))) == 1:
+        function.freset(update['callback_query']['message']['chat']['id'])
+        query.edit_message_text(text='Dati eliminati con successo!')
+
+    else:
+        query.edit_message_text(text='Nessun dato eliminato!')
+
+
+def addhpurs(bot, update):
+    data = update.message.text
+    data = data.split(':')
+    if len(data) == 2:
+        hours = 0
+        minute = 0
+        try:
+            hours = int(data[0])
+            minute = int(data[1])
+        except ValueError:
+            update.message.reply_text("La stringa inserita:\n->\t" + str(update.message.text)+"\t<-\nNon è formata da numeri.")
+            return ConversationHandler.END
+
+        if hours > 0 and minute > 0:
+            function.fadd(update.message.chat_id,hours*60+minute)
+            tot(bot,update)
+            return ConversationHandler.END
+        else:
+            update.message.reply_text("La stringa inserita:\n->\t" + str(update.message.text)+"\t<-\nNon è formata da numeri positivi.")
+            return ConversationHandler.END
+
+    
+    update.message.reply_text("La stringa inserita:\n->\t" + str(update.message.text)+"\t<-\nNon è nel formato HH:MM.")
+    return ConversationHandler.END
 
 def error(bot, update):
     """Log Errors caused by Updates."""
@@ -90,7 +142,17 @@ def main():
     dp.add_handler(CommandHandler("punch", punch))
     dp.add_handler(CommandHandler("day", day))
     dp.add_handler(CommandHandler("opt", opt))
+    dp.add_handler(CommandHandler("reset", reset))
 
+    updater.dispatcher.add_handler(CallbackQueryHandler(button))
+
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('add', add)],
+        states={'ADDHOURS': [MessageHandler(Filters.text,addhpurs),],},
+        fallbacks=[CommandHandler('help', help)]
+    )
+
+    dp.add_handler(conv_handler)
 
     # log all errors
     dp.add_error_handler(error)

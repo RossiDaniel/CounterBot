@@ -16,6 +16,12 @@ def now():
     result = min(best, key=lambda x:abs(x-minutes))
     hours = (result / 15) / 4
     minutes = (result - hours*60)
+
+    if hours <= 9:
+		hours = '0'+str(hours)
+    if minutes <= 9:
+		minutes = '0'+str(minutes)
+
     return str(hours)+":"+str(minutes)+"-"+str(now.year)+"/"+str(now.day)+"/"+str(now.month)
 
 def str_duration(elapsed_time):
